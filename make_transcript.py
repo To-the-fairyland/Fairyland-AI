@@ -162,7 +162,7 @@ def emo_trans(api_key,trans_previous , trans_tuple):
         api_key=apikey
     )
 
-    label_list = ['calm', 'sad', 'happy', 'fear', 'anger', 'main']
+    label_list = ['calm',  'happy','sad', 'anger','fear','surprise', 'main']
 
     trans_sets = []
 
