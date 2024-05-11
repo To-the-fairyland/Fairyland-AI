@@ -4,13 +4,33 @@ import numpy as np
 import librosa
 import torch , torchaudio
 import speech_recog , similar_check
+from pydantic import BaseModel
+import shutil
+import os
 
 app = FastAPI()
 
+
+class audiofile(BaseModel):
+    file : UploadFile
+
 @app.post("/predict-emotion/")
-async def predict_emotion_endpoint(file_directory: str):
+async def predict_emotion_endpoint(audiofile: UploadFile = File(...)):
+    print(audiofile)
+    filename = 'imsi.wav'
+
+    file = audiofile.file
+    with open(filename, "wb") as buffer:
+        shutil.copyfileobj(file, buffer)
+
+    # Get the current directory
+    current_directory = os.getcwd()
+    # List all files in the current directory
+    files = os.listdir(current_directory)
+    print(files)
+
     try:
-        emotion = speech_recog.predict(file_directory)
+        emotion = speech_recog.predict(filename)
     except FileNotFoundError:
         return {"emotion": 'file not exist'}
 
@@ -27,4 +47,4 @@ async def asr_similarity(file_directory: str,GT : str):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8001)
