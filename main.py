@@ -55,18 +55,21 @@ def main(args):
             for item in fairytail_pharas:
                 file.write(item + "\n")
 
-    fairytail_pharas = []
 
-    # Open the file in read mode
-    with open(novel_file_name , "r") as file:
-        # Read each line and append it to the loaded_list
-        for line in file:
-            fairytail_pharas.append(line.strip())
-
-    print(fairytail_pharas)
-    print(len(fairytail_pharas))
 
     if make_interaction:
+
+        fairytail_pharas = []
+
+        # Open the file in read mode
+        with open(novel_file_name, "r") as file:
+            # Read each line and append it to the loaded_list
+            for line in file:
+                fairytail_pharas.append(line.strip())
+
+        print(fairytail_pharas)
+        print(len(fairytail_pharas))
+
         def split_sens(pharas):
             kiwi = Kiwi()
             a = kiwi.split_into_sents(pharas)

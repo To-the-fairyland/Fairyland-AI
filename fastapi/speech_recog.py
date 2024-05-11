@@ -130,6 +130,7 @@ def load_model():
     LOAD_PATH = os.path.join(os.getcwd(), 'models')
     model = HybridModel(len(EMOTIONS))
     model.load_state_dict(torch.load(os.path.join(LOAD_PATH, 'best_cnn_attention_lstm_model.pt')))
+    return model
 
 def predict(filename):
 
@@ -151,5 +152,4 @@ def predict(filename):
     predictions = torch.argmax(output_softmax, dim=1)
     emotion = EMOTIONS[int(predictions[0])]
     return emotion
-
 

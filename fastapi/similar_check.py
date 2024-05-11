@@ -1,7 +1,13 @@
-import config
-import OpenAI
+import os,sys
+
+from openai import OpenAI
 import numpy as np
 from numpy.linalg import norm
+
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(parent_dir)
+
+import config
 
 def cosine_similarity(vector_a, vector_b):
     dot_product = np.dot(vector_a, vector_b)
