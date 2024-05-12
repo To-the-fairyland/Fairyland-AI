@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, Form
 from typing import List
 import numpy as np
 import librosa
@@ -7,14 +7,13 @@ import speech_recog , similar_check
 from pydantic import BaseModel
 import shutil
 import os
-
-app = FastAPI()
+import main
 
 
 class audiofile(BaseModel):
     file : UploadFile
 
-@app.post("/predict-emotion/")
+#@main.app.post("/predict-emotion/")
 async def predict_emotion_endpoint(audiofile: UploadFile = File(...)):
     print(audiofile)
     filename = 'imsi.wav'
@@ -23,12 +22,6 @@ async def predict_emotion_endpoint(audiofile: UploadFile = File(...)):
     with open(filename, "wb") as buffer:
         shutil.copyfileobj(file, buffer)
 
-    # Get the current directory
-    current_directory = os.getcwd()
-    # List all files in the current directory
-    files = os.listdir(current_directory)
-    print(files)
-
     try:
         emotion = speech_recog.predict(filename)
     except FileNotFoundError:
@@ -36,15 +29,26 @@ async def predict_emotion_endpoint(audiofile: UploadFile = File(...)):
 
     return {"emotion": emotion}
 
-@app.post("/asr-similarity/")
-async def asr_similarity(file_directory: str,GT : str):
+class similarity_audiofile(BaseModel):
+    file : UploadFile
+    groundtruth : str
 
-    transcript = similar_check.asr(file_directory)
+#@main.app.post("/asr-similarity/")
+async def asr_similarity(audio_file: UploadFile = UploadFile(...), groundtruth: str = Form(...)):
+
+    filename = 'imsi.wav'
+
+    print(audio_file)
+    print(groundtruth)
+
+    file,GT = audio_file.file , groundtruth
+    with open(filename, "wb") as buffer:
+        shutil.copyfileobj(file, buffer)
+
+    transcript = similar_check.asr(filename)
     similarity = similar_check.similar_check(transcript,GT)
 
     return {"transcript": transcript , "similarity" : similarity}
 
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+

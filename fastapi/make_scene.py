@@ -8,9 +8,7 @@ from kiwipiepy import Kiwi
 from fastapi import FastAPI, File, UploadFile
 import preprocess_novel , config,craft_img_prompt
 from pydantic import BaseModel
-
-make_novel_api = FastAPI()
-
+import main
 
 class Imageprompt(BaseModel):
     source: str
@@ -22,7 +20,7 @@ class Imageprompt(BaseModel):
     age_prompt : str      ##이미지 일관성 위한 나이 정보 , 없으면 ''
     char_des_dict : dict  ##이미지 일관성 위한 캐릭터 정보 , 없으면 ''
 
-@make_novel_api.post("/make-image/")
+#@main.app.post("/make-image/")
 async def make_novel(data : Imageprompt):
 
     source , split , target_scene,image_try = data.source , data.split , data.scene , data.image_try
@@ -75,10 +73,6 @@ async def make_novel(data : Imageprompt):
         'char_des_dict' : char_des_dict,
             }
 
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(make_novel_api, host="0.0.0.0", port=8002)
 
 
 
