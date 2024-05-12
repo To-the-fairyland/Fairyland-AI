@@ -7,14 +7,13 @@ import speech_recog , similar_check
 from pydantic import BaseModel
 import shutil
 import os
-
-app = FastAPI()
+import main
 
 
 class audiofile(BaseModel):
     file : UploadFile
 
-@app.post("/predict-emotion/")
+#@main.app.post("/predict-emotion/")
 async def predict_emotion_endpoint(audiofile: UploadFile = File(...)):
     print(audiofile)
     filename = 'imsi.wav'
@@ -34,7 +33,7 @@ class similarity_audiofile(BaseModel):
     file : UploadFile
     groundtruth : str
 
-@app.post("/asr-similarity/")
+#@main.app.post("/asr-similarity/")
 async def asr_similarity(audio_file: UploadFile = UploadFile(...), groundtruth: str = Form(...)):
 
     filename = 'imsi.wav'
@@ -52,6 +51,4 @@ async def asr_similarity(audio_file: UploadFile = UploadFile(...), groundtruth: 
     return {"transcript": transcript , "similarity" : similarity}
 
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+

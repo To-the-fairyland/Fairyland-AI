@@ -8,16 +8,14 @@ from kiwipiepy import Kiwi
 from fastapi import FastAPI, File, UploadFile
 import transfer_novel,preprocess_novel , config,make_transcript
 from pydantic import BaseModel
-
-make_novel_api = FastAPI()
-
+import main
 class NovelData(BaseModel):
     source: str
     split : int
     length_limit : int
 
-@make_novel_api.post("/make-novel/")
-async def make_novel(data : NovelData):
+#@main.app.post("/make-novel/")
+def make_novel(data):
 
     source , split , length_limit = data.source , data.split , data.length_limit
     api_key = config.API_KEY
@@ -44,7 +42,7 @@ class MadeNovelData(BaseModel):
     novel_num_dict: dict
     splited_novel_dict : dict
 
-@make_novel_api.post("/make-interaction/")
+#@main.app.post("/make-interaction/")
 async def make_interaction(data : MadeNovelData):
 
     sen_dict , para_dict = data.novel_num_dict , data.splited_novel_dict
@@ -93,9 +91,6 @@ async def make_interaction(data : MadeNovelData):
             }
 
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(make_novel_api, host="0.0.0.0", port=8000)
 
 
 
