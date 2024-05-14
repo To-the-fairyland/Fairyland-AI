@@ -8,7 +8,7 @@ from kiwipiepy import Kiwi
 from fastapi import FastAPI, File, UploadFile
 import transfer_novel,preprocess_novel , config,make_transcript
 from pydantic import BaseModel
-import main
+
 class NovelData(BaseModel):
     source: str
     split : int

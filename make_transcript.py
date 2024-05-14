@@ -41,7 +41,7 @@ def extract_trans(api_key,splited_fairytale,sen_len):
 
     trans_set = set()
 
-    gpt = "gpt-4-0125-preview"  ##"gpt-4-0125-preview"
+    gpt = "gpt-4-turbo"  ##"gpt-4-0125-preview"
 
     splited = sen_len // 3
     pos = splited_fairytale.find(f'[{str(splited)}]')
@@ -166,7 +166,7 @@ def emo_trans(api_key,trans_previous , trans_tuple):
 
     trans_sets = []
 
-    gpt = "gpt-4-0125-preview"  ##"gpt-4-0125-preview"
+    gpt = "gpt-4-turbo"  ##"gpt-4-0125-preview"
 
     for l, label in enumerate(label_list):
 
@@ -264,7 +264,7 @@ def make_guide(api_key,trans_sets,trans_tuple,previous):
             gen_trans_prompt = generate_guide_trans(context, u[1])
 
             completion = client.chat.completions.create(
-                model="gpt-4-0125-preview",
+                model="gpt-4-turbo",
                 messages=[
                     {"role": "system", "content": trans_role},
                     {"role": "user", "content": gen_trans_prompt}
@@ -341,7 +341,7 @@ def make_interaction(api_key,trans_sets , trans_tuple , previous):
             gen_trans_prompt = generate_role_trans(context, u[1])
 
             completion = client.chat.completions.create(
-                model="gpt-4-0125-preview",
+                model="gpt-4-turbo",
                 messages=[
                     {"role": "system", "content": trans_role},
                     {"role": "user", "content": gen_trans_prompt}

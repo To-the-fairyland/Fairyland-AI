@@ -7,7 +7,6 @@ import speech_recog , similar_check
 from pydantic import BaseModel
 import shutil
 import os
-import main
 
 
 class audiofile(BaseModel):
