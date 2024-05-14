@@ -1,7 +1,7 @@
 
 
 from kiwipiepy import Kiwi
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile , Form
 from pydantic import BaseModel
 import asyncio
 import make_image,make_novel,respond
@@ -11,7 +11,7 @@ app = FastAPI()
 
 @app.post("/make-novel/")
 async def make_novel_dummy(data : make_novel.NovelData):
-    a = await make_novel.make_novel(data)
+    a =  make_novel.make_novel(data)
     return a
 
 
@@ -23,14 +23,14 @@ async def make_interaction_dummy(data : make_novel.MadeNovelData):
 
 
 @app.post("/predict-emotion/")
-async def predict_emotion_dummy(data:respond.audiofile):
-    a = await respond.predict_emotion_endpoint(data)
+async def predict_emotion_dummy(audiofile: UploadFile = File(...)):
+    a = await respond.predict_emotion_endpoint(audiofile)
     return a
 
 
 @app.post("/asr-similarity/")
-async def asr_similarity_dummy(data:respond.similarity_audiofile):
-    a = await respond.asr_similarity(data)
+async def asr_similarity_dummy(audio_file: UploadFile = UploadFile(...), groundtruth: str = Form(...)):
+    a = await respond.asr_similarity(audio_file , groundtruth)
     return a
 
 

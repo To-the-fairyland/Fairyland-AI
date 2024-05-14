@@ -58,7 +58,7 @@ def age_prompt(api_key,source):
     answer : """
 
     completion = client.chat.completions.create(
-        model="gpt-4-0125-preview",
+        model="gpt-4-turbo",
         messages=[
             {"role": "system", "content": role},
             {"role": "user", "content": prompt}
