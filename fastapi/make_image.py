@@ -8,7 +8,6 @@ from kiwipiepy import Kiwi
 from fastapi import FastAPI, File, UploadFile
 import preprocess_novel , config,craft_img_prompt
 from pydantic import BaseModel
-import main
 
 class Imageprompt(BaseModel):
     source: str
@@ -18,7 +17,7 @@ class Imageprompt(BaseModel):
 
     history_prompt : str  ##이미지 일관성을 위한 사전 역사적 배경 , 없으면 ''
     age_prompt : str      ##이미지 일관성 위한 나이 정보 , 없으면 ''
-    char_des_dict : dict  ##이미지 일관성 위한 캐릭터 정보 , 없으면 ''
+    char_des_dict : dict  ##이미지 일관성 위한 캐릭터 정보 , 없으면 {}
 
 #@main.app.post("/make-image/")
 async def make_novel(data : Imageprompt):

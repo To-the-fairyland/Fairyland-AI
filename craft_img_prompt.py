@@ -93,7 +93,7 @@ def scene_prompt(api_key,pharagraph,character_ages):
     -영어로 답변할 것 """
 
     completion = client.chat.completions.create(
-        model="gpt-4-0125-preview",
+        model="gpt-4-turbo",
         messages=[
             {"role": "system", "content": role},
             {"role": "user", "content": prompt}
@@ -169,7 +169,7 @@ def character_prompt(api_key,source):
         """
 
         completion = client.chat.completions.create(
-            model="gpt-4-0125-preview",
+            model="gpt-4-turbo",
             messages=[
                 {"role": "system", "content": role},
                 {"role": "user", "content": prompt}
