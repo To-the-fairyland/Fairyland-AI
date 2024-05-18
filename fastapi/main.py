@@ -44,6 +44,10 @@ async def make_cover_dummy(data:make_image.Coverprompt):
     a = await make_image.make_cover(data)
     return a
 
+@app.post("/doyouworking/")
+async def check_working():
+    return {"status": "Server is working"}
+
 if __name__ == "__main__":
     import uvicorn
 
