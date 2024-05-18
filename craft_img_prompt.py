@@ -103,6 +103,41 @@ def scene_prompt(api_key,pharagraph,character_ages):
     scene_prompt = completion.choices[0].message.content
     return scene_prompt
 
+
+def cover_prompt(api_key, source, character_ages):
+    apikey = api_key
+
+    client = OpenAI(
+        api_key=apikey
+    )
+
+    role = """너는 prompt engeneer야. 너는 소설이 주어졌을 때 사건,인물,배경에 대해서 깊이 있게 분석하며 이를 사람들이 쉽게 이해하게끔 text-to-image model 한테 넣어주는 prompt로 변환해주는 역할을 해. 너는 이 장면을 prompt로 변환하려고 해."""
+
+    prompt = f"""<원문> : {source}
+
+    <원문>을 dalle에 넣을 prompt로 변환해줘. 다음과 같은 고려 사항을 지켜줘.
+
+    -<원문>을 대표하는 주요 장면을 묘사할 것
+    -prompt를 보아도 어떤 장면인지 한 눈에 알아볼 수 있도록 할 것.
+    -prompt를 보면 <원문>이 어떤 내용인지 한 눈에 알아볼 수 있도록 할 것
+    -해당 부분의 시대,공간적인 배경을 알아볼 수 있도록 할 것.
+    -<원문>에 나오는 핵심적인 사건,소재,인물,인물 연령이 드러나게 할 것
+    -<원문>에 나오는 인물의 성별을 명확하게 구별할 수 있게 할 것
+    -text to image 모델에 넣을 수 있게 문장 길이는 한 문장으로 될 것
+    -등장하는 주인공들의 연령도 고려할 것 : {character_ages}
+    -영어로 답변할 것 """
+
+    completion = client.chat.completions.create(
+        model="gpt-4-turbo",
+        messages=[
+            {"role": "system", "content": role},
+            {"role": "user", "content": prompt}
+        ]
+    )
+
+    cover_prompt = completion.choices[0].message.content
+    return cover_prompt
+
 def character_prompt(api_key,source):
     apikey = api_key
 
@@ -226,7 +261,7 @@ def make_character_description(api_key,scene_prompt,char_des_dict):
     return character_description
 
 
-def make_image(api_key,image_prompt , history_prompt , character_description , style_prompt):
+def make_image(api_key,image_prompt , history_prompt , character_description , style_prompt,cover=False):
     apikey = api_key
 
     client = OpenAI(
@@ -235,13 +270,22 @@ def make_image(api_key,image_prompt , history_prompt , character_description , s
 
     final_image_prompt = image_prompt + f',{history_prompt},no text,' + character_description + style_prompt
 
-    response = client.images.generate(
-        model="dall-e-3",
-        prompt=final_image_prompt,
-        size="1792x1024",
-        quality="standard",
-        n=1,
-    )
+    if cover:
+        response = client.images.generate(
+            model="dall-e-3",
+            prompt=final_image_prompt,
+            size="1024x1024",
+            quality="standard",
+            n=1,
+        )
+    else:
+        response = client.images.generate(
+            model="dall-e-3",
+            prompt=final_image_prompt,
+            size="1792x1024",
+            quality="standard",
+            n=1,
+        )
 
     image_url = response.data[0].url
 

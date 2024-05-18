@@ -39,6 +39,10 @@ async def make_image_dummy(data:make_image.Imageprompt):
     a = await make_image.make_novel(data)
     return a
 
+@app.post("/make-cover/")
+async def make_cover_dummy(data:make_image.Coverprompt):
+    a = await make_image.make_cover(data)
+    return a
 
 if __name__ == "__main__":
     import uvicorn
