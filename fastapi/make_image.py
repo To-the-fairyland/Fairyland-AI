@@ -73,5 +73,47 @@ async def make_novel(data : Imageprompt):
             }
 
 
+class Coverprompt(BaseModel):
+    source: str
+    image_try : int  ### 한번 생성에 몇 번 생성할 것인지
+
+    history_prompt : str  ##이미지 일관성을 위한 사전 역사적 배경 , 없으면 ''
+    age_prompt : str      ##이미지 일관성 위한 나이 정보 , 없으면 ''
+    char_des_dict : dict  ##이미지 일관성 위한 캐릭터 정보 , 없으면 {}
+
+async def make_cover(data : Coverprompt):
+
+    source ,image_try = data.source , data.image_try
+    api_key = config.API_KEY
+
+    style_prompt = '- Soft, warm color palette with golden sunlight effect\n- Detailed digital painting with a smooth texture\n- Stylized natural environments with enhanced lighting and shadows\n- Anime-inspired character design with expressive eyes and faces\n- Cinematic composition with a focus on depth and perspective\n- Glistening highlights and subtle glow effects for a magical ambiance'
+
+    history_prompt , age_prompt , char_des_dict = data.history_prompt , data.age_prompt , data.char_des_dict
+    assert history_prompt!='' and age_prompt!='' and char_des_dict != {}
 
 
+    final_images = []
+
+    scene_prompt = craft_img_prompt.cover_prompt(api_key, source, age_prompt)
+    character_description = craft_img_prompt.make_character_description(api_key, scene_prompt, char_des_dict)
+    for j in range(image_try):
+        for k in range(5):
+            print(f'scene : {scene_prompt}')
+            print(f'charac description : {character_description}')
+            try:
+                final_image = craft_img_prompt.make_image(api_key, scene_prompt, history_prompt,
+                                                          character_description, style_prompt,cover=True)
+                break
+            except Exception as e:
+                ### violation
+                scene_prompt = craft_img_prompt.scene_prompt(api_key, source, age_prompt)
+                continue
+        if k == 5:
+            print('full violation')
+            return
+        final_images.append(final_image)
+
+
+    return {
+        'scene_link' : final_images   ##   ['imglink1','imglink2' ...]
+            }
