@@ -69,14 +69,21 @@ async def make_interaction(data : MadeNovelData):
     print(numed_novel)
     print(num_sens)
 
-    script_set = make_transcript.extract_trans(api_key, numed_novel, num_sens)
-    trans_tuple, trans_previous = make_transcript.match_trans(numed_novel, previous, script_set)
+    try:
+        script_set = make_transcript.extract_trans(api_key, numed_novel, num_sens)
+        trans_tuple, trans_previous = make_transcript.match_trans(numed_novel, previous, script_set)
 
-    emo_script = make_transcript.emo_trans(api_key, trans_previous, trans_tuple)
+        emo_script = make_transcript.emo_trans(api_key, trans_previous, trans_tuple)
 
-    guide_script = make_transcript.make_guide(api_key, emo_script, trans_tuple, previous)
+        guide_script = make_transcript.make_guide(api_key, emo_script, trans_tuple, previous)
 
-    interaction_script = make_transcript.make_interaction(api_key, emo_script, trans_tuple, previous)
+        interaction_script = make_transcript.make_interaction(api_key, emo_script, trans_tuple, previous)
+    except ValueError:
+        return {
+            'emotion': 'error',
+            'guide': 'error',
+            'interaction': 'error'
+        }
 
     script_dict = {
         'emotion': emo_script,

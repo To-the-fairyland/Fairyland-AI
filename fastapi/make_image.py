@@ -9,6 +9,26 @@ from fastapi import FastAPI, File, UploadFile
 import preprocess_novel , config,craft_img_prompt
 from pydantic import BaseModel
 
+def split_for_image(source , split):
+    kiwi = Kiwi()
+    a = kiwi.split_into_sents(source)
+    splited = []
+    n,d = len(a)//(split-1) , len(a)%(split-1)
+    split_num = [n] * (split-1)
+    for i in range(d):
+        split_num[i] += 1
+    for i in range(split-1):
+        k = ''
+        for j in range(split_num[i]):
+            if i != 0 :
+                jj = j + sum(split_num[:i])
+            else:
+                jj = j
+            k += a[jj][0]
+        splited.append(k)
+
+    return splited , sum(split_num)
+
 class Imageprompt(BaseModel):
     source: str
     split : int
@@ -25,9 +45,10 @@ async def make_novel(data : Imageprompt):
     source , split , target_scene,image_try = data.source , data.split , data.scene , data.image_try
     api_key = config.API_KEY
 
-    splited, num_sens = preprocess_novel.split_novel(source, split)
+    splited, num_sens = split_for_image(source, split)
 
     assert len(splited) >= target_scene
+    assert len(splited) > 0
 
     style_prompt = '- Soft, warm color palette with golden sunlight effect\n- Detailed digital painting with a smooth texture\n- Stylized natural environments with enhanced lighting and shadows\n- Anime-inspired character design with expressive eyes and faces\n- Cinematic composition with a focus on depth and perspective\n- Glistening highlights and subtle glow effects for a magical ambiance'
 
@@ -41,7 +62,7 @@ async def make_novel(data : Imageprompt):
 
 
     for i, scene in enumerate(splited):
-        if i != target_scene:
+        if i != target_scene-1:
             continue
         final_images = []
 
